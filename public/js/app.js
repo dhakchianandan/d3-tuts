@@ -1,8 +1,6 @@
 (function(d3) {
 	console.log("Inside IIFE");
 
-	var data = [23,45,12,76,46,90,11];
-
 	var data = [
 		{
 			time: 0,
@@ -169,6 +167,9 @@
 			},
 			x: function (d, i) {
 				return xScale(d.time) + margin.left;
+			},
+			fill: function (d) {
+				return d3.rgb(Math.random()*255, Math.random()*255, Math.random()*255);
 			}
 		})
 

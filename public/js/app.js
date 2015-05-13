@@ -1,110 +1,33 @@
-(function(d3) {
-	console.log("Inside IIFE");
+(function (d3) {
 
 	var data = [
 		{
-			time: 0,
-			registration: 23
+			type: "A",
+			count: 1
 		},
 		{
-			time: 1,
-			registration: 45
+			type: "B",
+			count: 2
 		},
 		{
-			time: 2,
-			registration: 12
+			type: "C",
+			count: 3
 		},
 		{
-			time: 3,
-			registration: 76
+			type: "D",
+			count: 4
 		},
 		{
-			time: 4,
-			registration: 46
-		},
-		{
-			time: 5,
-			registration: 90
-		},
-		{
-			time: 6,
-			registration: 11
-		},
-		{
-			time: 7,
-			registration: 23
-		},
-		{
-			time: 8,
-			registration: 45
-		},
-		{
-			time: 9,
-			registration: 12
-		},
-		{
-			time: 10,
-			registration: 76
-		},
-		{
-			time: 11,
-			registration: 46
-		},
-		{
-			time: 12,
-			registration: 90
-		},
-		{
-			time: 13,
-			registration: 11
-		},
-		{
-			time: 14,
-			registration: 23
-		},
-		{
-			time: 15,
-			registration: 45
-		},
-		{
-			time: 16,
-			registration: 12
-		},
-		{
-			time: 17,
-			registration: 76
-		},
-		{
-			time: 18,
-			registration: 46
-		},
-		{
-			time: 19,
-			registration: 90
-		},
-		{
-			time: 20,
-			registration: 11
-		},
-		{
-			time: 21,
-			registration: 23
-		},
-		{
-			time: 22,
-			registration: 45
-		},
-		{
-			time: 23,
-			registration: 12
+			type: "E",
+			count: 5
 		}
 	];
 
 	var margin = {
-		top: 30,
-		bottom: 30,
 		left: 30,
-		right: 30
+		right: 30,
+		top: 30,
+		bottom: 30
 	}
 
 	var width = 500 - (margin.left + margin.right);
@@ -112,65 +35,63 @@
 
 	var svg = d3.select("svg")
 				.attr({
-					width: width + margin.left + margin.right,
-					height: height + margin.right + margin.left
+					"width": 500,
+					"height": 500
+				})
+				// .style({
+				// 	"background-color": "grey"
+				// })
+				.append("g")
+				.attr({
+					"transform": "translate("+ [margin.left, margin.right] +")"
 				});
 
-	svg.append("g")
-		.attr("transform", "translate("+ [margin.left, margin.top] +")")
+	var types = data.map(function (d) { return d.type;});
+	var xScale = d3.scale.ordinal()
+					.domain(types)
+					.rangeBands([0, width]);
+					// .rangeBands([0, width], 0.1);
 
-	var xScale = d3.scale.linear()
-					.domain([0, d3.max(data, function (d) {
-						return d.time
-					})])
-					.range([0, width]);
+	var yScale = d3.scale.linear()
+					.domain([0, d3.max(data, function (d) { return d.count})])
+					.range([height, 0]);
 
 	var xAxis = d3.svg.axis()
 					.scale(xScale)
 					.orient("bottom");
-
-
-	var yScale = d3.scale.linear()
-					.domain([0, d3.max(data, function (d) {
-						return d.registration
-					})])
-					.range([height, 0]);
 
 	var yAxis = d3.svg.axis()
 					.scale(yScale)
 					.orient("left");
 
 	svg.append("g")
-		.attr("class", "y axis")
-		.attr("transform", "translate("+ [margin.left, margin.top] +")")
-		.call(yAxis);
-
+		.call(xAxis)
+		.attr({
+			"transform": "translate("+ [0, height] +")"
+		});
 
 	svg.append("g")
-		.attr("class", "x axis")
-		.attr("transform", "translate("+ [margin.left, height + margin.bottom] +")")
-		.call(xAxis);
+		.call(yAxis);
 
 	svg.selectAll("rect")
 		.data(data)
 		.enter()
 		.append("rect")
 		.attr({
-			height: function (d) {
-				return height - yScale(d.registration);
+			"x": function (d) {
+				return xScale(d.type)
 			},
-			y: function (d) {
-				return yScale(d.registration) + margin.top;
+			"width": function (d) {
+				return xScale.rangeBand();
 			},
-			width: function (d) {
-				return width/data.length;
+			"y": function (d) {
+				return yScale(d.count);
 			},
-			x: function (d, i) {
-				return xScale(d.time) + margin.left;
+			"height": function (d) {
+				return height - yScale(d.count);
 			},
-			fill: function (d) {
+			"fill": function (d) {
 				return d3.rgb(Math.random()*255, Math.random()*255, Math.random()*255);
 			}
 		})
-
 })(d3);
